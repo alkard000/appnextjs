@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useState, useContext} from 'react';
 import Buscar from '../UI/Buscar';
 import Navegacion from './Navegacion';
 import Link from 'next/link';
@@ -6,8 +6,21 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import Router from 'next/router';
 
+//MATERIAL UI
+import Popover from '@material-ui/core/Popover';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardMedia from '@material-ui/core/CardMedia'
+
 import Boton from '../UI/Boton';
 import {FirebaseContext} from '../../firebase';
+
+//API CONTEXT
+
 
 const ContenedorHeader = styled.div`
     max-width:1200px;
@@ -19,7 +32,7 @@ const ContenedorHeader = styled.div`
     }
 `;
 
-const Logo = styled.p`
+const Logo = styled.a`
     color: var(--naranja);
     font-size : 4rem;
     line-height:0;
@@ -35,17 +48,31 @@ const Logo = styled.p`
 const Header = () => {
 
     const {usuario, firebase} = useContext(FirebaseContext);
+    console.log(usuario);
+
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = () => {
         firebase.cerrarSesion();
-        Router.push('/');
+        Router.push('/login');
     }
+
+    const handleClickPop = e => {
+        setAnchorEl(e.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
 
     return (
         <header
             css={css`
             border-bottom : 2px solid var(--gris3);
             padding : 1rem 0;
+            background-color:#fff;
         `}
         >
             <ContenedorHeader>
@@ -71,13 +98,47 @@ const Header = () => {
                     {usuario
                         ?
                         (<>
-                            <p
-                                css={css`
-                                    margin-right:2rem
-                                `}
-                            >
-                                Hola : <span>{usuario.displayName}</span>
-                            </p>
+                            <div>
+                                <Button 
+                                    aria-describedby={open ? 'simple-popover' : undefined} 
+                                    color="primary" 
+                                    onClick={handleClickPop}
+                                >
+                                    Mi Perfil
+                                </Button>
+                                <Popover
+                                    id={open ? 'simple-popover' : undefined}
+                                    open={open}
+                                    anchorEl={anchorEl}
+                                    onClose={handleClose}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                >
+                                    <Card>
+                                        <CardActionArea>
+                                            <CardContent >
+                                            <Typography  gutterBottom variant="h5" component="h2">
+                                                Hola : <span>{usuario.displayName}</span>
+                                            </Typography>
+                                            <Typography variant="body2" color="textSecondary" component="p">
+                                            </Typography>
+                                            </CardContent>
+                                        </CardActionArea>
+                                        <CardActions>
+                                            <Button href="/perfil" size="small" color="primary">
+                                            Mi Perfil
+                                            </Button>
+                                        </CardActions>
+                                    </Card>
+                                </Popover>
+                            </div>
+
                             <Boton 
                                 bgColor='true' 
                                 type="button"

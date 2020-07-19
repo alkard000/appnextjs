@@ -4,12 +4,12 @@ export const Formulario = styled.form`
     max-width:600px;
     width:95%;
     margin:5rem auto 0 auto;
+    background-color:#fff;
+    padding:4rem;
+    border-radius:15px;
 
     fieldset{
-        margin:2rem 0;
-        border: 1px solid #e1e1e1;
         font-size:2rem;
-        padding:2rem;
     }
 `;
 
@@ -18,6 +18,9 @@ export const Campo = styled.div`
     display:flex;
     align-items:center;
     transition:all 0.3s ease;
+    border:#a1a1a1 1px solid;
+    padding:1rem;
+    border-radius:15px;
 
     label{
         flex:0 0 150px;

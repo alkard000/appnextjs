@@ -1,45 +1,66 @@
-import React, {useState} from 'react';
+import React, { useState, useContext } from 'react';
 import { css } from '@emotion/core';
 import Router from 'next/router';
 import Layout from '../components/layout/Layout';
-import {Formulario, Campo, InputSubmit, Error} from '../components/UI/Formulario';
+import { Formulario, Campo, InputSubmit, Error } from '../components/UI/Formulario';
 
+//MATERIAL UI
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import TextField from '@material-ui/core/TextField';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+
+//FIREBASE
 import firebase from '../firebase';
 //VALIDACIONES
 import useValidacion from '../hooks/useValidacion';
 import validarCrearCuenta from '../validacion/validarCrearCuenta';
 
+//CONTEXT
+import AuthContext from '../context/auth/authContext';
 
 const CrearCuenta = () => {
 
+    //CONTEXT DE AUTENTICACION
+    const authContext = useContext(AuthContext);
+    const {registrarUsuario} = authContext;
+
     const [error, setError] = useState(false);
+    const [viewPass, setViewPass] = useState(false);
+
 
     const STATE_INICIAL = {
-    nombre : '',
-    email : '',
-    password : ''
+        nombre: '',
+        email: '',
+        password: '',
+        repetirPassword : ''
     }
-    const {valores,
+    const { valores,
         errores,
         submitForm,
         handleSubmit,
-        handleChange, 
-        handleBlur} = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
+        handleChange,
+        handleBlur } = useValidacion(STATE_INICIAL, validarCrearCuenta, crearCuenta);
 
-    const {nombre, email, password} = valores;
+    const { nombre, email, password, repetirPassword } = valores;
 
 
-    async function crearCuenta(){
-        try {
-            await firebase.registrar(nombre, email, password);
+    function crearCuenta() {
+        if(password === repetirPassword){
+            registrarUsuario(nombre, email, password, {imagenUrl : ''});
             Router.push('/');
-        } catch (error) {
-            console.error('Hubo un error al crear el usuario', error.message);
-            setError(error.message);
+        }else{
+            return;
         }
     }
 
-    return ( 
+    const handleClickShowPassword = () => {
+        setViewPass(!viewPass);
+    };
+
+
+    return (
         <div>
             <Layout>
                 <>
@@ -53,45 +74,179 @@ const CrearCuenta = () => {
                         onSubmit={handleSubmit}
                         noValidate
                     >
-                        <Campo>
-                            <label htmlFor="nombre">Nombre</label>
-                            <input
-                                type="text"
-                                id="nombre"
-                                placeholder="Coloca tu nombre"
-                                name="nombre"
-                                value={nombre}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                        </Campo>
-                        {errores.nombre && <Error>{errores.nombre}</Error>}
-                        <Campo>
-                            <label htmlFor="email">Email</label>
-                            <input
-                                type="text"
-                                id="email"
-                                placeholder="Coloca tu Email"
-                                name="email"
-                                value={email}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                            />
-                        </Campo>
-                        {errores.email && <Error>{errores.email}</Error>}
-                        <Campo>
-                            <label htmlFor="password">Password</label>
-                            <input
-                                type="password"
+                        {/*INGRESAR NOMBRE */}
+                        {!errores.nombre ?
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    label="Nombre"
+                                    id="nombre"
+                                    placeholder="Coloca tu nombre"
+                                    name="nombre"
+                                    value={nombre}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                            :
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    error
+                                    label="Nombre"
+                                    id="nombre"
+                                    placeholder="Coloca tu nombre"
+                                    name="nombre"
+                                    helperText={errores.nombre}
+                                    value={nombre}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                        }
+                        {/*INGRESAR EMAIL */}
+                        {!errores.email ?
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    label="Email"
+                                    placeholder="Ingresa tu Email"
+                                    id="email"
+                                    name="email"
+                                    value={email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                            :
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    error
+                                    label="Email"
+                                    id="email"
+                                    placeholder="Ingresa tu Email"
+                                    name="email"
+                                    helperText={errores.email}
+                                    value={email}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                        }
+                        {/* INGRESAR PASSWORD */}
+                        {!errores.password ?
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    InputProps={{
+                                    endAdornment :
+                                        (<InputAdornment style={{margin:'10px'}} position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                            >
+                                                {viewPass ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>)
+                                    }}
+                                label="Password"
+                                type={viewPass ? "text" : "password"}
+                                placeholder="Ingresa tu Password"
                                 id="password"
-                                placeholder="Coloca tu Password"
                                 name="password"
                                 value={password}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                             />
                         </Campo>
-                        {errores.password && <Error>{errores.password}</Error>}
+                            :
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    InputProps={{
+                                        endAdornment :
+                                        (<InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                            >
+                                                {viewPass ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>)
+                                    }}
+                                    error
+                                    label="Password"
+                                    type={viewPass ? "text" : "password"}
+                                    id="password"
+                                    placeholder="Ingresa tu Password"
+                                    name="password"
+                                    helperText={errores.password}
+                                    value={password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                        }
+                        {/* REPETIR PASSWORD */}
+                        {!errores.repetirPassword ?
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    InputProps={{
+                                    endAdornment :
+                                        (<InputAdornment style={{margin:'10px'}} position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                            >
+                                                {viewPass ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>)
+                                    }}
+                                label="Repetir Password"
+                                type={viewPass ? "text" : "password"}
+                                placeholder="Ingresa tu Password"
+                                id="repetirPassword"
+                                name="repetirPassword"
+                                value={repetirPassword}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            />
+                        </Campo>
+                            :
+                            <Campo>
+                                <TextField
+                                    fullWidth
+                                    InputProps={{
+                                        endAdornment :
+                                        (<InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="toggle password visibility"
+                                                onClick={handleClickShowPassword}
+                                                edge="end"
+                                            >
+                                                {viewPass ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>)
+                                    }}
+                                    error
+                                    label="Repetir Password"
+                                    type={viewPass ? "text" : "password"}
+                                    id="repetirPassword"
+                                    placeholder="Ingresa tu Password"
+                                    name="repetirPassword"
+                                    helperText={errores.repetirPassword}
+                                    value={repetirPassword}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                />
+                            </Campo>
+                        }
+
                         {error && <Error>{error}</Error>}
                         <InputSubmit
                             type="submit"
@@ -99,9 +254,9 @@ const CrearCuenta = () => {
                         />
                     </Formulario>
                 </>
-            </Layout> 
+            </Layout>
         </div>
     );
 }
- 
+
 export default CrearCuenta;

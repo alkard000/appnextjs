@@ -1,6 +1,8 @@
 import App from 'next/app';
 import firebase, {FirebaseContext} from '../firebase';
 import useAuth from '../hooks/useAuth';
+import AlertaState from '../context/alertas/AlertaState';
+
 
 
 const MyApp = ({Component, pageProps}) => {
@@ -9,14 +11,17 @@ const MyApp = ({Component, pageProps}) => {
 
 
     return(
-        <FirebaseContext.Provider
-            value={{
-                firebase,
-                usuario
-            }}
-        >
-            <Component {...pageProps} />
-        </FirebaseContext.Provider>
+        <AlertaState>
+            <FirebaseContext.Provider
+                value={{
+                    firebase,
+                    usuario
+                }}
+            >
+                <Component {...pageProps} />
+            </FirebaseContext.Provider>
+        </AlertaState>
+
     )
 }
 

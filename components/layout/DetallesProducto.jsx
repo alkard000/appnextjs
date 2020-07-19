@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import styled from '@emotion/styled';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import {es} from 'date-fns/locale';
@@ -100,7 +101,9 @@ const DetallesProducto = ({producto}) => {
                     <Imagen src={urlImagen} />
                 </div>
                 <div>
+                <Link href="/producto/[id]" as={`/producto/${id}`}>
                     <Titulo>{nombre}</Titulo>
+                </Link>
 
                     <TextoDescripcion>{descripcion}</TextoDescripcion>
 
