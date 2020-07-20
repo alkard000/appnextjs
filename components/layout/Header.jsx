@@ -54,7 +54,6 @@ const Header = () => {
     const {mobile, tablet, computer} = useQueries();
 
     const {usuario, firebase} = useContext(FirebaseContext);
-    console.log(usuario);
 
     const [anchorEl, setAnchorEl] = useState(null);
 

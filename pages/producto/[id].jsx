@@ -38,6 +38,7 @@ import { FirebaseContext } from '../../firebase';
 import Error404 from '../../components/layout/Error404';
 import { Campo, InputSubmit } from '../../components/UI/Formulario';
 import Boton from '../../components/UI/Boton';
+import transitions from '@material-ui/core/styles/transitions';
 
 const ContenedorProducto = styled.div`
     @media (min-width:768px){
@@ -57,8 +58,7 @@ const QuienComento = styled.div`
 const ListaComentario = styled.div`
     border : 1px solid #e1e1e1;
     margin : 2rem 0;
-`
-
+`;
 const Producto = () => {
 
     //STATE DEL COMPONENTE
@@ -66,6 +66,7 @@ const Producto = () => {
     const [error, setError] = useState(false);
     const [comentario, setComentario] = useState({});
     const [consultarDB, setConsultarDB] = useState(true);
+
     //ROUTING PARA OBTENR LA URL ACTUAL
     const router = useRouter();
     const { query: { id } } = router;
@@ -194,7 +195,6 @@ const Producto = () => {
             console.log(error);
         }
     }
-
 
     return (
         <Layout>
@@ -352,8 +352,12 @@ const Producto = () => {
                                     </Card>
                                 </>
                                 }
+
                                 <BottomNavigation
-                                    style={{ padding: '2rem', borderRadius: '15px' }}
+                                    style={{ 
+                                        padding: '2rem', 
+                                        borderRadius: '15px'
+                                    }}
                                     showLabels
                                 >
                                     {usuario ?
