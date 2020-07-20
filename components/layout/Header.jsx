@@ -5,7 +5,6 @@ import Link from 'next/link';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
 import Router from 'next/router';
-
 //MATERIAL UI
 import Popover from '@material-ui/core/Popover';
 import Typography from '@material-ui/core/Typography';
@@ -14,13 +13,13 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia'
 
+import MenuMobile from './MenuMobile';
 import Boton from '../UI/Boton';
-import {FirebaseContext} from '../../firebase';
-
 //API CONTEXT
-
+import {FirebaseContext} from '../../firebase';
+//CUSTOM HOOKS
+import useQueries from '../../hooks/useQueries';
 
 const ContenedorHeader = styled.div`
     max-width:1200px;
@@ -30,6 +29,11 @@ const ContenedorHeader = styled.div`
         display:flex;
         justify-content:space-between;
     }
+`;
+
+const ContenedorMobile = styled.div`
+    display:flex;
+    justify-content:space-between;
 `;
 
 const Logo = styled.a`
@@ -46,6 +50,8 @@ const Logo = styled.a`
 `;
 
 const Header = () => {
+
+    const {mobile, tablet, computer} = useQueries();
 
     const {usuario, firebase} = useContext(FirebaseContext);
     console.log(usuario);
@@ -73,9 +79,10 @@ const Header = () => {
             border-bottom : 2px solid var(--gris3);
             padding : 1rem 0;
             background-color:#fff;
+            width:100%
         `}
         >
-            <ContenedorHeader>
+            {(computer)?<ContenedorHeader>
                 <div
                     css={css`
                         display:flex;
@@ -162,6 +169,8 @@ const Header = () => {
 
                 </div>
             </ContenedorHeader>
+            :<ContenedorMobile><MenuMobile/>
+            <Buscar/></ContenedorMobile>}
         </header>
     );
 }

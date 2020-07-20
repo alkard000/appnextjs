@@ -2,7 +2,33 @@ import React, { useEffect, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
 import { css } from '@emotion/core';
+//ANIMATED
+import {
+    CSSTransition,
+    TransitionGroup,
+} from 'react-transition-group';
+//MATERIAL UI
+import Avatar from '@material-ui/core/Avatar';
+import AvatarGroup from '@material-ui/lab/AvatarGroup';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import Chip from '@material-ui/core/Chip';
+import QueryBuilderIcon from '@material-ui/icons/QueryBuilder';
+import StarsIcon from '@material-ui/icons/Stars';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+
+import CardActions from '@material-ui/core/CardActions';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+
+import ShareIcon from '@material-ui/icons/Share';
+
+
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { es } from 'date-fns/locale';
 import Button from '@material-ui/core/Button';
@@ -21,15 +47,17 @@ const ContenedorProducto = styled.div`
     }
 `;
 
-const CreadorProducto = styled.p`
-    padding:.5rem 2rem;
-    background-color:#da552f;
-    color:#fff;
-    text-transform:uppercase;
-    font-weight:bold;
-    display:inline-block;
-    text-align:center;
+const QuienComento = styled.div`
+    background-color:#fff;
+    padding:2rem;
+    border-radius:15px;
+    margin:2rem 0 ;
 `;
+
+const ListaComentario = styled.div`
+    border : 1px solid #e1e1e1;
+    margin : 2rem 0;
+`
 
 const Producto = () => {
 
@@ -142,31 +170,31 @@ const Producto = () => {
     }
 
     const puedeBorrar = () => {
-        if(!usuario) return false;
+        if (!usuario) return false;
 
-        if(creador && creador.id === usuario.uid){
+        if (creador && creador.id === usuario.uid) {
             return true;
         }
     }
 
     //ELIMINAR UN PRODUCTO DE LA BASE DE DATOS
     const eliminarProducto = async () => {
-        if(!usuario){
+        if (!usuario) {
             return router.push('/login');
         }
 
-        if(creador && creador.id !== usuario.uid){
+        if (creador && creador.id !== usuario.uid) {
             return router.push('/');
         }
 
-        try {  
+        try {
             await firebase.db.collection('producto').doc(id).delete();
-            router.push('/'); 
+            router.push('/');
         } catch (error) {
             console.log(error);
         }
-        
     }
+
 
     return (
         <Layout>
@@ -196,8 +224,6 @@ const Producto = () => {
 
                         <ContenedorProducto>
                             <div>
-                                <p>Publicado hace {creado && formatDistanceToNow(new Date(creado), { locale: es })}</p>
-                                {creador && <p>Publicado por : {creador.nombre} | {empresa}</p>}
 
                                 {urlImagen ?
                                     <img src={urlImagen} />
@@ -212,8 +238,6 @@ const Producto = () => {
                                     align-content: center
                                 `}
                                     ><CircularProgress color="secondary" /></div>}
-
-                                <p>{descripcion}</p>
 
                                 {usuario && (
                                     <>
@@ -242,56 +266,112 @@ const Producto = () => {
                                     margin:2rem 0;
                                 `}
                                 >Comentarios</h2>
+                                <TransitionGroup
 
-                                <ul>
+                                >
                                     {comentarios && comentarios.map((comentario, i) => (
-                                        <li
+                                        <CSSTransition
                                             key={`${comentario.usuarioId}-${i}`}
+                                            timeout={500}
                                             css={css`
-                                            border : 1px solid #e1e1e1;
-                                            padding:2rem;
-                                        `}
+                                                border : 1px solid #e1e1e1;
+                                                padding:2rem;
+                                                background-color:#e2e2e2;
+                                                border-radius:15px;
+                                            `}
                                         >
-                                            <p>{comentario.mensaje}</p>
-                                            <p>Escrito por :
-                                            <span
+                                            <ListaComentario>
+                                                <div style={{display:'flex', alignContent:'center', alignItems:'center'}}>
+                                                    <Avatar >{comentario.usuarioNombre.charAt(0)}</Avatar>
+                                                    <p style={{marginLeft:'1.5rem'}}>{comentario.usuarioNombre}</p>
+                                                </div>
+                                                <p
                                                     css={css`
-                                                    font-weight:bold;
-                                                `}
-                                                > {comentario.usuarioNombre}</span>
-                                            </p>
-                                            {esCreador(comentario.usuarioId) && <CreadorProducto>Es Creador</CreadorProducto>}
-                                        </li>
-                                    ))}
-                                </ul>
+                                                        background-color:#fff;
+                                                        padding:2rem;
+                                                        border-radius:15px;
+                                                        border:1px solid #e1e1e1;
+                                                    `}
+                                                >
+                                                    {comentario.mensaje}
+                                                </p>
 
+                                                {esCreador(comentario.usuarioId) ?
+                                                    <Chip
+                                                        label="Autor"
+                                                        clickable
+                                                        color="primary"
+                                                        icon={<StarsIcon />}
+                                                    />
+                                                    :
+                                                    null
+                                                }
+                                            </ListaComentario>
+                                        </CSSTransition>
+                                    ))}
+                                </TransitionGroup>
                             </div>
 
                             <aside>
-                                <Boton
-                                    target="_blank"
-                                    bgColor="true"
-                                    href={url}
-                                >
-                                    Visitar URL
-                            </Boton>
-                                {usuario && (
-                                    <button
-                                        onClick={votarProducto}
-                                        id="desactivar"
-                                    // css={css`
-                                    //     ${!pointer ? 'pointer-events: none;' : null}
-                                    // `}
+                                <Chip
+                                    style={{
+                                        width:"100%",
+                                        fontSize:"1.5rem",
+                                        margin:"2rem 0"
+                                    }}
+                                    icon={<QueryBuilderIcon />}
+                                    label={<p>Publicado hace {creado && formatDistanceToNow(new Date(creado), { locale: es })}</p>}
+                                />
+                                {creador &&
+                                <>
+                                    <Card
+                                        style={{margin : "1.5rem 0rem"}}
                                     >
-                                        Votar
-                                    </button>
-                                )}
+                                        <CardHeader
+                                            avatar={
+                                                <Avatar aria-label="recipe">
+                                                    {creador.nombre.charAt(0)}
+                                                </Avatar>
+                                            }
+                                            title={<p style={{fontSize:'2rem',  margin:'0'}}>Creado por {creador.nombre}</p>}
+                                            subheader={<p style={{fontSize:'1.5rem', margin:'0'}}>{empresa}</p>}
+                                        />
+                                        <CardContent>
+                                            <Typography variant="body2" color="textSecondary" component="p">
+                                                <p style={{fontSize:'1.5rem'}}>{descripcion}</p>
+                                            </Typography>
+                                        </CardContent>
+                                        {/* <CardActions disableSpacing>
+                                            <IconButton aria-label="add to favorites">
+                                                <FavoriteIcon />
+                                            </IconButton>
+                                            <IconButton aria-label="share">
+                                                <ShareIcon />
+                                            </IconButton>
+                                        </CardActions> */}
+                                    </Card>
+                                </>
+                                }
+                                <BottomNavigation
+                                    style={{ padding: '2rem', borderRadius: '15px' }}
+                                    showLabels
+                                >
+                                    {usuario ?
+                                        <BottomNavigationAction onClick={votarProducto} label={`${votos} Votos`} icon={<FavoriteIcon style={{ color: 'red', fontSize: 40 }} />} />
+                                        :
+                                        <BottomNavigationAction href='/login' label={`${votos} Votos`} icon={<FavoriteIcon style={{ fontSize: 40 }} />} />
+                                    }
+                                    <BottomNavigationAction href={url} label="Visitar URL" icon={<LocationOnIcon style={{ color: 'orange', fontSize: 40 }} />} />
+                                </BottomNavigation>
 
-                                <p
-                                    css={css`
-                                    text-align:center;
-                                `}
-                                >{votos} Votos</p>
+                                <QuienComento>
+                                    <p>Quienes Comentaron: </p>
+                                    <AvatarGroup max={4}>
+                                        {comentarios && comentarios.map((comentario, i) => (
+                                            <Avatar key={i}>{comentario.usuarioNombre.charAt(0)}</Avatar>
+                                        ))}
+                                    </AvatarGroup>
+                                </QuienComento>
                             </aside>
                         </ContenedorProducto>
 

@@ -5,7 +5,11 @@ import FileUploader from 'react-firebase-file-uploader'
 import Layout from '../components/layout/Layout';
 import { Formulario, Campo, InputSubmit, Error } from '../components/UI/Formulario';
 import Error404 from '../components/layout/Error404';
+import FadeIn from 'react-fade-in';
 
+//MATERIAL UI
+import TextField from '@material-ui/core/TextField';
+//API CONTEXT
 import { FirebaseContext } from '../firebase';
 //VALIDACIONES
 import useValidacion from '../hooks/useValidacion';
@@ -113,34 +117,67 @@ const NuevoProducto = () => {
                             onSubmit={handleSubmit}
                             noValidate
                         >
-                            <fieldset>
-                                <legend>Informacion general</legend>
-                                <Campo>
-                                    <label htmlFor="nombre">Nombre</label>
-                                    <input
-                                        type="text"
-                                        id="nombre"
-                                        placeholder="Coloca tu nombre"
-                                        name="nombre"
-                                        value={nombre}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                </Campo>
-                                {errores.nombre && <Error>{errores.nombre}</Error>}
-                                <Campo>
-                                    <label htmlFor="empresa">Empresa</label>
-                                    <input
-                                        type="text"
-                                        id="empresa"
-                                        placeholder="Coloca tu Empresa o  Compañia"
-                                        name="empresa"
-                                        value={empresa}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                </Campo>
-                                {errores.empresa && <Error>{errores.empresa}</Error>}
+                            
+                                {/*INGRESAR NOMBRE */}
+                                {!errores.nombre ?
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            label="Nombre del Producto"
+                                            id="nombre"
+                                            placeholder="Coloca el Nombre del Producto"
+                                            name="nombre"
+                                            value={nombre}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                    :
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            error
+                                            label="Nombre del Producto"
+                                            id="nombre"
+                                            placeholder="Coloca el Nombre del Producto"
+                                            name="nombre"
+                                            helperText={errores.nombre}
+                                            value={nombre}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                }
+                                {/*INGRESAR EMPRESA */}
+                                {!errores.empresa ?
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            label="Empresa"
+                                            id="empresa"
+                                            placeholder="Coloca tu empresa"
+                                            name="empresa"
+                                            value={empresa}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                    :
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            error
+                                            label="Empresa"
+                                            id="empresa"
+                                            placeholder="Coloca tu empresa"
+                                            name="empresa"
+                                            helperText={errores.empresa}
+                                            value={empresa}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                }
                                 <Campo>
                                     <label htmlFor="imagen">Imagen</label>
                                     <FileUploader
@@ -156,23 +193,39 @@ const NuevoProducto = () => {
                                     />
                                 </Campo>
 
-                                <Campo>
-                                    <label htmlFor="url">URL</label>
-                                    <input
-                                        type="url"
-                                        id="url"
-                                        placeholder="Url del producto"
-                                        name="url"
-                                        value={url}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                </Campo>
-                                {errores.url && <Error>{errores.url}</Error>}
-                            </fieldset>
+                                {/*INGRESAR URL */}
+                                {!errores.url ?
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            type="url"
+                                            label="Url"
+                                            id="url"
+                                            placeholder="Coloca la URL del Producto"
+                                            name="url"
+                                            value={url}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                    :
+                                    <Campo>
+                                        <TextField
+                                            fullWidth
+                                            error
+                                            type="url"
+                                            label="Url"
+                                            id="url"
+                                            placeholder="Coloca la URL del Producto"
+                                            name="url"
+                                            helperText={errores.url}
+                                            value={url}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                    </Campo>
+                                }
 
-                            <fieldset>
-                                <legend>Sobre tu producto</legend>
                                 <Campo>
                                     <label htmlFor="descripcion">Descripcion</label>
                                     <textarea
@@ -184,9 +237,7 @@ const NuevoProducto = () => {
                                         onBlur={handleBlur}
                                     />
                                 </Campo>
-                                {errores.descripcion && <Error>{errores.descripcion}</Error>}
-                            </fieldset>
-                            {error && <Error>{error}</Error>}
+                                {errores.descripcion && <FadeIn><Error>{errores.descripcion}</Error></FadeIn> }
                             <InputSubmit
                                 type="submit"
                                 value="Crear Producto"

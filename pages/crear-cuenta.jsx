@@ -17,14 +17,8 @@ import firebase from '../firebase';
 import useValidacion from '../hooks/useValidacion';
 import validarCrearCuenta from '../validacion/validarCrearCuenta';
 
-//CONTEXT
-import AuthContext from '../context/auth/authContext';
-
 const CrearCuenta = () => {
 
-    //CONTEXT DE AUTENTICACION
-    const authContext = useContext(AuthContext);
-    const {registrarUsuario} = authContext;
 
     const [error, setError] = useState(false);
     const [viewPass, setViewPass] = useState(false);

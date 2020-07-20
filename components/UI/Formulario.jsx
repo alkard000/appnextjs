@@ -1,16 +1,15 @@
 import styled from '@emotion/styled';
 
 export const Formulario = styled.form`
-    max-width:600px;
-    width:95%;
-    margin:5rem auto 0 auto;
+    width:50%;
+    min-width:300px;
+    margin:5rem auto 5rem auto;
     background-color:#fff;
     padding:4rem;
     border-radius:15px;
+    font-family:'PT Sans', sans-serif;
 
-    fieldset{
-        font-size:2rem;
-    }
+
 `;
 
 export const Campo = styled.div`
@@ -21,20 +20,52 @@ export const Campo = styled.div`
     border:#a1a1a1 1px solid;
     padding:1rem;
     border-radius:15px;
+    min-width:300px;
+
+    /* @media (max-width:600px){
+        width:50%;
+    } */
 
     label{
         flex:0 0 150px;
         font-size:1.8rem;
     }
 
+    @media (max-width:600px){
+        label{
+            font-size:1rem!important;
+            flex:0 0 60px;
+        }
+    }
+
     input, 
     textarea{
         flex:1;
         padding:1rem;
+        font-size:2rem;
+    }
+
+    @media (max-width:600px){
+        input,
+        textarea{
+            font-size:1rem!important;
+        }
+    }
+
+    @media (max-width:600px){
+        input  #imagen{
+            font-size:.5rem!important;
+        }
     }
 
     textarea{
         height:300px;
+    }
+
+    @media (max-width:600px){
+        textarea{
+            height:150px!important;
+        }
     }
 `;
 
